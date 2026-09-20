@@ -1,0 +1,1 @@
+{"name":"spare-voice-interface","version":"2.0.0","private":true,"scripts":{"build":"node scripts/build.cjs","test":"node --test tests/frontend.test.cjs","dev":"node scripts/serve.cjs"},"engines":{"node":">=20"}}
