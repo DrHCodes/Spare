@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#f3f3e9"><meta name="description" content="Spare. Live voice coaching for the time you already have."><title>Spare — Just say the word.</title><link rel="icon" href="icon.svg"><link rel="stylesheet" href="style.css"></head>
+<body>
+<header><a class="brand" href="./" aria-label="Spare home">spare<span> / </span></a><span class="brand-note">MOVEMENT IN THE TIME YOU ALREADY HAVE</span><button id="settings" class="quiet-button" aria-label="Connection settings">Connection <span aria-hidden="true">↗</span></button></header>
+<main>
+<div class="intro"><p class="eyebrow"><span class="dot"></span> A LITTLE SPACE FOR YOURSELF</p><h1>Just say<br><em>the word.</em></h1><p class="lede">No scrolling for a workout. No equipment.<br>Tell Spare what you have time for. Then put the screen down.</p></div>
+<section class="voice-card" aria-label="Live voice coach">
+ <div class="card-top"><span id="connectionStatus" class="connection"><i></i> NOT CONNECTED</span><span class="small-label">LIVE COACHING</span></div>
+ <div id="orb" class="orb" aria-hidden="true"><div class="orb-inner"><span></span><span></span><span></span><span></span><span></span></div><div class="orbit"></div></div>
+ <p id="stateLabel" class="state-label">ONE CONVERSATION. YOUR OWN PACE.</p>
+ <h2 id="prompt">“How much time do you have?”</h2>
+ <p id="subtext" class="subtext">Then: “And how intense would you like it?”<br>Answer in your own words. Spare will check it understood.</p>
+ <button id="connect" class="primary"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="2" width="6" height="12" rx="3"></rect><path d="M5 10v2a7 7 0 0 0 14 0v-2M12 19v3M8 22h8"></path></svg><span>Start talking</span><span aria-hidden="true">↗</span></button>
+ <p id="consent" class="consent">AI-generated voice. Your microphone connects only after you start.<br>No camera. No recordings saved by this app.</p>
+ <div id="liveControls" class="live-controls" hidden><button id="mute" aria-pressed="false">Mute mic</button><button id="pause">Pause movement</button><button id="stop" class="danger">End session</button></div>
+ <button id="enableAudio" class="quiet-button" hidden>Tap to enable the speaker</button>
+ <div id="notice" class="notice" role="alert" hidden></div>
+ <div id="sessionInfo" class="session-info" hidden><div><span>TIME REMAINING</span><strong id="timeLeft">—</strong></div><div><span>TARGET EFFORT</span><strong id="effortScore">—</strong></div><div><span>NOW</span><strong id="currentExercise">Listening</strong></div></div>
+ <div class="card-bottom"><span><i></i> No jumping. No equipment.</span><span>Firm, kind, and on your side.</span></div>
+</section>
+<section class="below"><p><span>01</span> Tell us your time.</p><p><span>02</span> Describe your effort.</p><p><span>03</span> Move. Talk. Adjust.</p></section>
+<details id="details" class="details"><summary>What the coach understands <span>+</span></summary><div class="details-content"><p id="understood">No session yet. The coach will confirm its interpretation before creating a workout.</p><p class="muted">Effort is a personal target—not measured exertion. Your “Lagree-like medium” reference starts at 6/10; it does not mean an equivalent class. High effort still includes recovery.</p><pre id="technical">Live model and audio have not connected.</pre></div></details>
+<footer><span>Little moments. Real movement.</span><button id="privacy" class="quiet-button">Safety & privacy</button><span>VOICE FIRST · v2.0</span></footer>
+</main>
+<audio id="remoteAudio" autoplay playsinline></audio>
+<dialog id="settingsDialog"><div class="dialog-heading"><h2>Connect your coach.</h2><button data-close aria-label="Close">×</button></div><p>Run the Python voice server, then enter its address. API keys belong in <code>agent/.env</code>—never here.</p><label>Voice server URL<input id="backend" type="url" placeholder="http://localhost:7860" autocomplete="off"></label><label>Private Spare access code <small>(only for a protected server)</small><input id="accessCode" type="password" autocomplete="off" placeholder="Not an API key"></label><p id="providerInfo" class="provider-info">Provider is selected on the server. No automatic browser-voice fallback.</p><button id="saveSettings" class="primary">Save connection</button><p class="muted">For local use, open the app on the Python server. A Vercel frontend needs a reachable HTTPS backend with a matching allowed origin. The backend is not deployed by Vercel.</p></dialog>
+<dialog id="privacyDialog"><div class="dialog-heading"><h2>Your pace. Your choice.</h2><button data-close aria-label="Close">×</button></div><p>This is a prototype with AI-generated workout content, not a form assessment or personalized medical guidance. You can say “pause” or “stop” at any time. Stop for pain, dizziness, or concerning symptoms.</p><p>Your chosen finish time continues during explanations and breaks. Movement pauses when you speak and resumes only when you are ready. No camera means no verified repetitions or intensity measurement.</p><p>Use a clear space away from hot appliances. Your microphone stays active while the session is connected, including while Spare speaks. Audio/text are sent to the selected service providers. The app keeps only temporary in-memory session state and does not save recordings or transcripts. Provider retention policies are separate.</p><p>Keep the page visible and the device awake. Background or locked-screen reliability is not promised. Use the visible End session button if speech recognition fails.</p></dialog>
+<script src="app.js"></script>
+</body></html>
