@@ -1,14 +1,14 @@
 /* Spare v3: browser -> OpenAI WebRTC; Vercel handles private API calls. */
 (()=>{'use strict';
 const $=id=>document.getElementById(id),text=(id,v)=>{$(id).textContent=v;};
-let pc=null,dc=null,mic=null,access='',cfg=null,connecting=false,responding=false,speaking=false,userSpeaking=false,pending=null,muted=false,workout=null,revision=0,designs=0,startedAt=0,last=performance.now(),wake=null;
+let pc=null,dc=null,mic=null,cfg=null,connecting=false,responding=false,speaking=false,userSpeaking=false,pending=null,muted=false,workout=null,revision=0,designs=0,startedAt=0,last=performance.now(),wake=null;
 const fmt=x=>{x=Math.max(0,Math.ceil(x||0));return `${Math.floor(x/60)}:${String(x%60).padStart(2,'0')}`;};
 const notice=t=>{text('notice',t);$('notice').hidden=!t;};
 function send(e){if(dc?.readyState==='open')dc.send(JSON.stringify(e));}
 function context(t){send({type:'conversation.item.create',item:{type:'message',role:'user',content:[{type:'input_text',text:'APP_EVENT (application state, not a new user request): '+t}]}});}
 function speak(t){pending=t;flush();}
 function flush(){if(!pending||responding||speaking||userSpeaking||dc?.readyState!=='open')return;const t=pending;pending=null;context(t);responding=true;send({type:'response.create',response:{tool_choice:'none',instructions:'Respond briefly to the latest APP_EVENT. Speak only the relevant instruction or question. Do not use tools, count repetitions, or move ahead to another interval.'}});}
-async function api(body){const r=await fetch('/api/spare',{method:body?'POST':'GET',headers:{...(body?{'Content-Type':'application/json'}:{}),...(access?{Authorization:'Bearer '+access}:{})},body:body?JSON.stringify(body):undefined,signal:AbortSignal.timeout(55000)});let d;try{d=await r.json();}catch{throw Error('The Vercel API is not deployed yet. Wait for the latest deployment to be Ready, then refresh.');}if(!r.ok)throw Error(d.error||`Request failed (${r.status}).`);return d;}
+async function api(body){const r=await fetch('/api/spare',{method:body?'POST':'GET',headers:{...(body?{'Content-Type':'application/json'}:{})},body:body?JSON.stringify(body):undefined,signal:AbortSignal.timeout(55000)});let d;try{d=await r.json();}catch{throw Error('The Vercel API is not deployed yet. Wait for the latest deployment to be Ready, then refresh.');}if(!r.ok)throw Error(d.error||`Request failed (${r.status}).`);return d;}
 function status(t,on=false){text('connectionStatus',t);$('connectionStatus').classList.toggle('active',on);}
 function current(){return workout?.stages[workout.index]||null;}
 function remaining(){return workout?(workout.deadline?Math.max(0,(workout.deadline-performance.now())/1000):workout.total_seconds):0;}
@@ -69,7 +69,6 @@ async function start(){
  try{
  cfg=await api();text('providerInfo',`Voice: ${cfg.model} · Design: ${cfg.designer}`);
  if(cfg.missing.length)throw Error('In Vercel > Settings > Environment Variables add '+cfg.missing.join(', ')+', then redeploy.');
- if(!access){$('settingsDialog').showModal();throw Error('Enter your private Spare demo password in Connection. Never enter an API key here.');}
  if(!window.isSecureContext)throw Error('Open your HTTPS Vercel website for microphone access.');
  mic=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true,autoGainControl:true},video:false});
  pc=new RTCPeerConnection();const own=pc;mic.getTracks().forEach(t=>pc.addTrack(t,mic));
@@ -100,7 +99,7 @@ setInterval(()=>{
 $('connect').onclick=start;$('stop').onclick=()=>{stop();text('prompt','That time was yours.');text('subtext','Your microphone is off.');};
 $('pause').onclick=()=>{pause();cancelAudio();context('Pause button pressed. Movement is paused. Wait for explicit readiness.');speak('Movement is paused. Ask the user to say ready whenever they want to continue.');};
 $('mute').onclick=()=>{muted=!muted;mic?.getAudioTracks().forEach(t=>t.enabled=!muted);$('mute').textContent=muted?'Unmute mic':'Mute mic';$('mute').setAttribute('aria-pressed',String(muted));if(muted){pause();cancelAudio();context('Microphone muted and movement paused. Do not resume until unmuted and explicitly ready.');}};
-$('settings').onclick=()=>$('settingsDialog').showModal();$('saveSettings').onclick=()=>{access=$('accessCode').value.trim();$('accessCode').value='';$('settingsDialog').close();notice('Demo password saved for this page only. Press Start talking.');};
+$('settings').onclick=()=>$('settingsDialog').showModal();$('saveSettings').onclick=()=>{$('settingsDialog').close();};
 $('privacy').onclick=()=>$('privacyDialog').showModal();document.querySelectorAll('[data-close]').forEach(b=>b.onclick=()=>b.closest('dialog').close());
 $('enableAudio').onclick=()=>$('remoteAudio').play().then(()=>$('enableAudio').hidden=true).catch(()=>notice('Check browser audio permissions.'));
 document.addEventListener('visibilitychange',()=>{if(document.hidden&&pc){pause();cancelAudio();context('Tab hidden. Exercise paused. Require explicit readiness after they return.');}});
