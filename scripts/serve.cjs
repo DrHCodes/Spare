@@ -1,0 +1,3 @@
+const http=require('node:http'),fs=require('node:fs'),path=require('node:path');
+const root=path.resolve(__dirname,'../web');
+http.createServer((req,res)=>{const name=decodeURIComponent(req.url.split('?')[0]);const p=path.resolve(root,'.'+(name==='/'?'/index.html':name));if(!p.startsWith(root+path.sep)){res.writeHead(403);return res.end();}fs.readFile(p,(e,b)=>{res.writeHead(e?404:200,{'Content-Type':p.endsWith('.css')?'text/css':p.endsWith('.js')?'text/javascript':p.endsWith('.svg')?'image/svg+xml':'text/html'});res.end(e?'Not found':b);});}).listen(4173,'127.0.0.1',()=>console.log('UI preview only: http://127.0.0.1:4173. Live voice needs the Python server.'));
